@@ -1,10 +1,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// 上线后把 site 换成你的真实域名，例如 https://aiguide.example.com
+// Cloudflare Pages 域名（部署后确认为实际链接再核对）
 export default defineConfig({
-  site: 'https://vvc3303.github.io',
-  base: '/ai-fix-guide/',
+  site: 'https://ai-fix-guide.pages.dev',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
