@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostItem from '../components/PostItem.astro';
+import { getCollection } from 'astro:content';
+import { pillarMeta, pillars } from '../content.config';
+
+export function getStaticPaths() {
+  return pillars.map((pillar) => ({
+    params: { pillar },
+    props: { pillar },
+  }));
+}
+
+const { pillar } = Astro.props;
+const meta = pillarMeta[pillar];
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft && p.data.pillar === pillar)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title={`${meta.name} 排错教程`}
+  description={meta.desc}
+>
+  <div class="crumbs">
+    <a href="/">首页</a> / <span>{meta.name}</span>
+  </div>
+
+  <section class="pillar-hero">
+    <span class="badge badge-pillar" style={{ '--c-pillar': meta.color }}>
+      {meta.icon} {meta.name}
+    </span>
+    <h1>{meta.name} 排错教程</h1>
+    <p class="pillar-desc">{meta.desc}</p>
+  </section>
+
+  <section>
+    {posts.length > 0 ? (
+      <div class="post-list">
+        {posts.map((post) => <PostItem post={post} />)}
+      </div>
+    ) : (
+      <p class="empty">该专栏文章整理中，先看看其他专栏吧。</p>
+    )}
+  </section>
+</BaseLayout>

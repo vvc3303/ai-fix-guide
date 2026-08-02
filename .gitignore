@@ -1,0 +1,15 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.astro/
+
+# 环境变量与密钥（千万别提交）
+.env
+.env.*
+!.env.example
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

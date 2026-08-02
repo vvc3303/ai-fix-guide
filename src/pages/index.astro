@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostItem from '../components/PostItem.astro';
+import { getCollection } from 'astro:content';
+import { pillarMeta, pillars } from '../content.config';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const latest = posts.slice(0, 8);
+const counts = Object.fromEntries(
+  pillars.map((p) => [p, posts.filter((x) => x.data.pillar === p).length])
+);
+---
+
+<BaseLayout title="AI 排错指南">
+  <section class="hero">
+    <span class="tagline">Ollama · Claude · CCSwitch · Python · Vue · MCP</span>
+    <h1>让每一个 AI 新手<br />不再卡在环境部署上</h1>
+    <p class="sub">
+      全部内容基于真实踩坑整理：报错原文 → 原因分析 → 分步解决 → 效果验证。
+      与其照着「正确教程」反复失败，不如直接搜到你的报错和答案。
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">六大专栏</h2>
+    <div class="pillar-grid">
+      {pillars.map((key) => {
+        const m = pillarMeta[key];
+        return (
+          <a class="pillar-card" href={`/${key}/`}>
+            <span class="pc-icon">{m.icon}</span>
+            <div class="pc-name">{m.name}</div>
+            <p class="pc-desc">{m.desc}</p>
+            <span class="pc-count">共 {counts[key] || 0} 篇排错教程 →</span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">最新排错文章</h2>
+    {latest.length > 0 ? (
+      <div class="post-list">
+        {latest.map((post) => <PostItem post={post} />)}
+      </div>
+    ) : (
+      <p class="empty">文章整理中，敬请期待。</p>
+    )}
+  </section>
+</BaseLayout>

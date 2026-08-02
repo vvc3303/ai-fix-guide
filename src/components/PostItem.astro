@@ -1,0 +1,26 @@
+---
+import { pillarMeta } from '../content.config';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { pillar, tags, pubDate, readingMinutes } = post.data;
+const meta = pillarMeta[pillar];
+const date = pubDate.toISOString().slice(0, 10);
+---
+
+<a class="post-item" href={`/posts/${post.id}`}>
+  <div class="pi-head">
+    <span class="badge badge-pillar" style={{ '--c-pillar': meta.color }}>
+      {meta.name}
+    </span>
+    <span class="pi-title">{post.data.title}</span>
+  </div>
+  <p class="pi-desc">{post.data.description}</p>
+  <div class="pi-meta">
+    {date} · {readingMinutes} 分钟 · {tags.map((t) => `#${t}`).join(' ')}
+  </div>
+</a>

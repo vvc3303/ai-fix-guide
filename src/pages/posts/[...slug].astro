@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { pillarMeta } from '../../content.config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts
+    .filter((p) => !p.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const meta = pillarMeta[post.data.pillar];
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const date = post.data.pubDate.toISOString().slice(0, 10);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article>
+    <div class="crumbs">
+      <a href="/">首页</a> /
+      <a href={`/${post.data.pillar}/`}>{meta.name}</a> /
+      <span>{post.data.title}</span>
+    </div>
+
+    <header class="article-header">
+      <div class="article-meta">
+        <span class="badge badge-pillar" style={{ '--c-pillar': meta.color }}>
+          {meta.name}
+        </span>
+        <span>{date}</span>
+        <span>{post.data.readingMinutes} 分钟阅读</span>
+      </div>
+      <h1>{post.data.title}</h1>
+      <p class="lead">{post.data.description}</p>
+      <div class="article-meta">
+        {post.data.tags.map((t) => <span class="tag-chip">#{t}</span>)}
+      </div>
+    </header>
+
+    <div class="article-grid">
+      <aside class="toc">
+        {toc.length > 0 && (
+          <details open>
+            <summary>目录</summary>
+            <ol>
+              {toc.map((h) => (
+                <li class:list={{ 'toc-h3': h.depth === 3 }}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
+      </aside>
+
+      <div class="article-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

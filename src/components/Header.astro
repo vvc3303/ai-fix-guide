@@ -1,0 +1,27 @@
+---
+import { pillarMeta } from '../content.config';
+
+const items = Object.entries(pillarMeta);
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">
+      <span class="logo">AI</span>
+      <span>AI 排错指南</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/">首页</a>
+      {items.map(([key, meta]) => (
+        <a href={`/${key}/`}>{meta.name}</a>
+      ))}
+    </nav>
+    <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('nav');
+  toggle?.addEventListener('click', () => nav?.classList.toggle('open'));
+</script>
