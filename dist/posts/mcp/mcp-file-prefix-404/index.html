@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VSCode MCP 插件拉取 404：仓库地址带了 file:// 前缀 · AI 排错指南</title><meta name="description" content="在 VSCode 里手动填第三方 MCP 插件仓库地址，市场解析失败、拉取 404。原因是地址带了多余的 file:// 本地协议前缀，删掉即可。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/mcp/">MCP 配置</a> /
+<span>VSCode MCP 插件拉取 404：仓库地址带了 file:// 前缀</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-mcp)"> MCP 配置 </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>VSCode MCP 插件拉取 404：仓库地址带了 file:// 前缀</h1> <p class="lead">在 VSCode 里手动填第三方 MCP 插件仓库地址，市场解析失败、拉取 404。原因是地址带了多余的 file:// 本地协议前缀，删掉即可。</p> <div class="article-meta"> <span class="tag-chip">#MCP</span><span class="tag-chip">#VSCode</span><span class="tag-chip">#404</span><span class="tag-chip">#插件</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>想在 VSCode 里装一个第三方 MCP 插件，市场解析失败、拉取直接 404。这种错很隐蔽，根因往往是一个<strong>多余的前缀</strong>。</p>
+<h2 id="报错现象">报错现象</h2>
+<ul>
+<li>仓库地址解析失败</li>
+<li>插件拉取返回 404</li>
+<li>地址看起来「没问题」，但就是拉不到</li>
+</ul>
+<h2 id="原因分析">原因分析</h2>
+<p>手动填写的第三方 MCP 插件仓库地址<strong>格式错误</strong>：带了多余的 <code>file://</code> 本地协议前缀。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span># 错误写法：带着本地协议前缀，市场识别不了</span></span>
+<span class="line"><span>file://https://github.com/xxx/mcp-plugin</span></span>
+<span class="line"><span>file:///C:/my-plugins/mcp-plugin</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 正确写法：标准 Git 仓库地址</span></span>
+<span class="line"><span>https://github.com/xxx/mcp-plugin</span></span></code></pre>
+<p>插件市场按 Git 仓库地址去拉取，<code>file://</code> 前缀会干扰解析，导致找不到源、404。</p>
+<h2 id="解决步骤">解决步骤</h2>
+<ol>
+<li><strong>删除协议前缀</strong>，改用标准 Git 仓库地址：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>https://github.com/xxx/mcp-plugin.git</span></span></code></pre>
+<ol start="2">
+<li>如果地址正确仍拉不到，<strong>改用 npm 全局安装</strong>方式：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#E1E4E8">npm install </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">g @some</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">scope</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">mcp</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">plugin</span></span></code></pre>
+<p>再在 MCP 配置里用 <code>npx</code> / 命令方式引用。</p>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>仓库地址解析成功</li>
+<li>插件拉取不再 404，正常加载启用</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>地址解析失败</td><td>删掉 <code>file://</code> 前缀</td></tr><tr><td>拉取 404</td><td>确认是标准 Git 地址</td></tr><tr><td>仓库地址正确仍失败</td><td>改 npm 全局安装</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>填 MCP 仓库地址只认 <code>http(s)://</code> 开头</strong>。看到 <code>file://</code> 就打住，它是本地协议，不是给市场用的。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

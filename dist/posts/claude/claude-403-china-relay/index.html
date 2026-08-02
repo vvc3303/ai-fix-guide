@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>国内直连 Claude 官方接口 403：网络直达 + 中转权限两个坑 · AI 排错指南</title><meta name="description" content="直连 Anthropic 原生接口国内网络 403 无法访问，改用中转后 ClaudeCode 又报 403 服务商未开通模型权限。两个 403 两种解法。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/claude/">Claude</a> /
+<span>国内直连 Claude 官方接口 403：网络直达 + 中转权限两个坑</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-claude)"> Claude </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>国内直连 Claude 官方接口 403：网络直达 + 中转权限两个坑</h1> <p class="lead">直连 Anthropic 原生接口国内网络 403 无法访问，改用中转后 ClaudeCode 又报 403 服务商未开通模型权限。两个 403 两种解法。</p> <div class="article-meta"> <span class="tag-chip">#Claude</span><span class="tag-chip">#Anthropic</span><span class="tag-chip">#403</span><span class="tag-chip">#中转</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象两种-403">报错现象（两种 403）</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li class="toc-h3"> <a href="#场景一直连-403">场景一：直连 403</a> </li><li class="toc-h3"> <a href="#场景二中转-claudecode-403">场景二：中转 ClaudeCode 403</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>直连 Claude 官方接口报 403，是「网络 + 权限」叠加造成的。别急着怀疑密钥，先分清 403 是哪种。</p>
+<h2 id="报错现象两种-403">报错现象（两种 403）</h2>
+<p><strong>场景一：直连官方</strong></p>
+<p>直接调用 Anthropic 原生接口（<code>https://api.anthropic.com/v1/messages</code>），返回：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>403 Forbidden</span></span></code></pre>
+<p><strong>场景二：走中转</strong></p>
+<p>改用中转服务后调用 ClaudeCode，依然 403：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>403: model not enabled / forbidden</span></span></code></pre>
+<h2 id="原因分析">原因分析</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>场景</th><th>根因</th></tr></thead><tbody><tr><td>直连官方 403</td><td>国内网络无法直达 Anthropic，请求被墙/拦截</td></tr><tr><td>中转 ClaudeCode 403</td><td>中转服务商<strong>未开通该模型的权限</strong>，Key 可用但模型不可用</td></tr></tbody></table>
+<p>两种情况都是「不是密钥错，是路不通或没权限」。</p>
+<h2 id="解决步骤">解决步骤</h2>
+<h3 id="场景一直连-403">场景一：直连 403</h3>
+<ol>
+<li>切换为 <strong>OpenAI 兼容协议的中转接口</strong>配置（而不是直连 Anthropic 原生接口）</li>
+<li>改用<strong>本地 Ollama 兜底</strong>：把不重要的请求走 <code>http://localhost:11434</code></li>
+</ol>
+<h3 id="场景二中转-claudecode-403">场景二：中转 ClaudeCode 403</h3>
+<ol>
+<li>先到中转服务商后台确认<strong>是否开通了 Claude 系列模型权限</strong></li>
+<li>开通后如果仍 403，确认填的是 Claude 的模型名（不是 GPT 的）</li>
+</ol>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>请求不再返回 403</li>
+<li>ClaudeCode 能正常对话、调用工具</li>
+<li>断网/官方不可用时有 Ollama 本地兜底</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>直连官方 403</td><td>换 OpenAI 兼容中转接口</td></tr><tr><td>中转仍 403</td><td>检查服务商是否开通该模型</td></tr><tr><td>中转慢/不稳</td><td>本地 Ollama 兜底</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>国内用 Claude，第一反应别是换密钥，而是换「协议 + 通道」</strong>。中转地址、密钥、模型名三者要配套。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>报表饼图统计为 0、重复统计、过滤语法报错：核对字段与表达式 · AI 排错指南</title><meta name="description" content="报表饼图预览异常、统计结果为 0、过滤条件语法报错。根因是过滤表达式缺引号、字段名不匹配，核对数据库原始字段值格式即可。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/vue/">Vue 低代码</a> /
+<span>报表饼图统计为 0、重复统计、过滤语法报错：核对字段与表达式</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-vue)"> Vue 低代码 </span> <span>2026-08-02</span> <span>5 分钟阅读</span> </div> <h1>报表饼图统计为 0、重复统计、过滤语法报错：核对字段与表达式</h1> <p class="lead">报表饼图预览异常、统计结果为 0、过滤条件语法报错。根因是过滤表达式缺引号、字段名不匹配，核对数据库原始字段值格式即可。</p> <div class="article-meta"> <span class="tag-chip">#Vue</span><span class="tag-chip">#报表</span><span class="tag-chip">#饼图</span><span class="tag-chip">#过滤表达式</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>报表饼图不是统计为 0，就是重复统计，要不就是过滤条件一写就报语法错。查下来往往不是图表问题，是<strong>过滤表达式和字段匹配</strong>的问题。</p>
+<h2 id="报错现象">报错现象</h2>
+<ul>
+<li>报表<strong>饼图预览异常</strong></li>
+<li>统计结果<strong>重复</strong>（同一数据算了多遍）</li>
+<li>过滤条件<strong>语法报错</strong></li>
+<li>统计结果为 <strong>0</strong>，图表无法渲染</li>
+</ul>
+<h2 id="原因分析">原因分析</h2>
+<p>常见三连：</p>
+<ol>
+<li><strong>单元格过滤表达式缺少引号</strong>：比如 <code>=状态:完成</code> 没加引号，平台当成变量去解析，直接报错或取不到值</li>
+<li><strong>字段名称匹配不一致</strong>：表达式里写的字段名和数据库里的实际字段对不上，统计不到数据 = 0</li>
+<li><strong>重复统计</strong>：数据集/过滤器加了多个相同的统计口径，或数据源关联关系没理清</li>
+</ol>
+<h2 id="解决步骤">解决步骤</h2>
+<ol>
+<li><strong>核对数据库原始字段值格式</strong>：先看库里这个字段到底存的是什么（数字、文本、枚举），别拿猜的字段名写表达式。</li>
+<li><strong>修正表达式语法</strong>：文本值必须加引号：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span># 错误：文本值没加引号</span></span>
+<span class="line"><span>过滤: 状态 = 完成</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 正确：文本值加引号</span></span>
+<span class="line"><span>过滤: 状态 = "完成"</span></span></code></pre>
+<ol start="3">
+<li><strong>优先使用独立 SQL 数据集做聚合</strong>，把统计逻辑收敛在 SQL 里：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> status</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">COUNT</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> cnt</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> business_model</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#F97583"> status</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> '完成'</span></span>
+<span class="line"><span style="color:#F97583">GROUP BY</span><span style="color:#F97583"> status</span></span></code></pre>
+<p>再把 SQL 结果集绑到饼图，避免在报表层叠加多层过滤导致的重复统计。</p>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>饼图正常渲染，分区比例正确</li>
+<li>统计结果不再为 0、不重复</li>
+<li>过滤条件不再报语法错误</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>统计为 0</td><td>核对字段名与值格式</td></tr><tr><td>语法报错</td><td>文本值加引号</td></tr><tr><td>重复统计</td><td>用独立 SQL 数据集聚合</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>报表 90% 的「统计不对」，根子在字段和表达式，不在图表</strong>。先对数据，再调图。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

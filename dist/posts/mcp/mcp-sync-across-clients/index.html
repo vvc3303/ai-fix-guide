@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MCP 在 VSCode 配好，ClaudeCode/Codex/OpenCode 却用不了 · AI 排错指南</title><meta name="description" content="VSCode 里配置好的 MCP 工具，其他 AI 客户端没法复用。手动把 MCP 配置 JSON 复制到对应客户端配置目录，并补上 Node.js 运行依赖。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/mcp/">MCP 配置</a> /
+<span>MCP 在 VSCode 配好，ClaudeCode/Codex/OpenCode 却用不了</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-mcp)"> MCP 配置 </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>MCP 在 VSCode 配好，ClaudeCode/Codex/OpenCode 却用不了</h1> <p class="lead">VSCode 里配置好的 MCP 工具，其他 AI 客户端没法复用。手动把 MCP 配置 JSON 复制到对应客户端配置目录，并补上 Node.js 运行依赖。</p> <div class="article-meta"> <span class="tag-chip">#MCP</span><span class="tag-chip">#VSCode</span><span class="tag-chip">#ClaudeCode</span><span class="tag-chip">#OpenCode</span><span class="tag-chip">#同步</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>VSCode 里辛苦配好的 MCP 工具，到 ClaudeCode、Codex、OpenCode 里却一个都调不到。原因是：<strong>配置是 VSCode 私有的，不会自动同步</strong>。</p>
+<h2 id="报错现象">报错现象</h2>
+<ul>
+<li>VSCode 内 MCP 工具正常</li>
+<li>ClaudeCode / Codex / OpenCode 里找不到这些工具</li>
+<li>反复重装、重启都没用</li>
+</ul>
+<h2 id="原因分析">原因分析</h2>
+<p>不同 AI 客户端读的是<strong>各自的配置文件</strong>，互不相通：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>客户端</th><th>MCP 配置位置</th></tr></thead><tbody><tr><td>VSCode</td><td>VSCode 的 settings / MCP 面板</td></tr><tr><td>ClaudeCode</td><td><code>~/.claude.json</code> 或项目 <code>.mcp.json</code></td></tr><tr><td>OpenCode</td><td>各自客户端的配置目录</td></tr></tbody></table>
+<p>另外，MCP server 大多是 Node.js 写的，客户端调用时还需要 <strong>Node.js 运行环境依赖</strong>，缺了也会失败。</p>
+<h2 id="解决步骤">解决步骤</h2>
+<ol>
+<li><strong>手动复制 MCP 配置 JSON</strong>：把 VSCode 里那一份 MCP 配置，粘贴到目标客户端的配置目录对应文件里。</li>
+<li><strong>逐个客户端确认格式</strong>：ClaudeCode 用它的 <code>.mcp.json</code> / 配置，OpenCode 用它的配置目录，格式略有不同，别直接照搬。</li>
+<li><strong>补齐 Node.js 运行环境依赖</strong>：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#E1E4E8">node </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">v     </span><span style="color:#6A737D"># 确认已装 Node</span></span>
+<span class="line"><span style="color:#E1E4E8">npm install </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">g @modelcontextprotocol</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">server</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">xxx   </span><span style="color:#6A737D"># 缺哪个装哪个</span></span></code></pre>
+<ol start="4">
+<li>重启目标客户端，验证工具是否出现在列表。</li>
+</ol>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>ClaudeCode / Codex / OpenCode 都能看到并调用 MCP 工具</li>
+<li>报错信息里不再有「找不到模块 / 连接失败」</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>工具不出现</td><td>复制 JSON 到对应客户端配置目录</td></tr><tr><td>出现但调用失败</td><td>补 Node.js 依赖</td></tr><tr><td>照搬格式报错</td><td>按客户端各自格式改</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>MCP 配置是「各客户端私有」的，不会自动同步</strong>。换客户端 = 手动搬配置 + 确认运行依赖。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

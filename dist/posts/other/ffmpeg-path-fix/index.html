@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>FFmpeg 环境配置失效：把 bin 目录写进 PATH 并校验 · AI 排错指南</title><meta name="description" content="视频处理插件依赖 FFmpeg，但没配置系统环境变量，工具调用时提示找不到程序。解压 FFmpeg、把 bin 目录加入 PATH、用 ffmpeg -version 校验。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/other/">其他工具</a> /
+<span>FFmpeg 环境配置失效：把 bin 目录写进 PATH 并校验</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-other)"> 其他工具 </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>FFmpeg 环境配置失效：把 bin 目录写进 PATH 并校验</h1> <p class="lead">视频处理插件依赖 FFmpeg，但没配置系统环境变量，工具调用时提示找不到程序。解压 FFmpeg、把 bin 目录加入 PATH、用 ffmpeg -version 校验。</p> <div class="article-meta"> <span class="tag-chip">#FFmpeg</span><span class="tag-chip">#环境变量</span><span class="tag-chip">#视频处理</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>视频处理插件调用 FFmpeg，报「找不到程序」，十有八九是<strong>装了但没配环境变量</strong>。</p>
+<h2 id="报错现象">报错现象</h2>
+<ul>
+<li>视频处理插件/脚本运行时提示找不到 <code>ffmpeg</code></li>
+<li>终端里执行 <code>ffmpeg</code> 提示「不是内部或外部命令」</li>
+<li>但你已经下载好 FFmpeg 了</li>
+</ul>
+<h2 id="原因分析">原因分析</h2>
+<p>FFmpeg 是<strong>绿色软件</strong>，解压后不会自动进 PATH。系统不知道 ffmpeg 在哪个目录，工具自然找不到它。</p>
+<h2 id="解决步骤">解决步骤</h2>
+<ol>
+<li><strong>解压 FFmpeg</strong> 到固定目录，例如：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>D:\tools\ffmpeg\bin</span></span></code></pre>
+<ol start="2">
+<li><strong>把 bin 目录写入系统 PATH 环境变量</strong>：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#E1E4E8">[</span><span style="color:#F97583">Environment</span><span style="color:#E1E4E8">]::SetEnvironmentVariable(</span></span>
+<span class="line"><span style="color:#9ECBFF">  "Path"</span><span style="color:#F97583">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "</span><span style="color:#E1E4E8">$</span><span style="color:#79B8FF">env:</span><span style="color:#E1E4E8">Path</span><span style="color:#9ECBFF">;D:\tools\ffmpeg\bin"</span><span style="color:#F97583">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "User"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>或者走图形界面：系统属性 → 高级 → 环境变量 → Path → 新建 → 粘贴 <code>D:\tools\ffmpeg\bin</code>。</p>
+<ol start="3">
+<li><strong>重新打开终端</strong>，校验：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#E1E4E8">ffmpeg </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">version</span></span></code></pre>
+<p>能打印版本信息即配置成功。</p>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li><code>ffmpeg -version</code> 正常输出</li>
+<li>视频处理插件不再报「找不到程序」</li>
+<li>命令行里也能直接用 <code>ffmpeg</code> 处理视频</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>找不到程序</td><td>加 bin 目录到 PATH</td></tr><tr><td>加了仍不行</td><td>重开终端再试</td></tr><tr><td>提示 DLL 缺失</td><td>确认解压完整，下载全量版</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>绿色软件三步走：解压 → 加 PATH → 重开终端校验</strong>。没走完第三步，等于没配。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

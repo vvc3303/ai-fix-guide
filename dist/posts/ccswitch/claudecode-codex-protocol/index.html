@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ClaudeCode、Codex 调不了，GPT 却正常？CCSwitch 协议适配差异 · AI 排错指南</title><meta name="description" content="同一个 CCSwitch 里 GPT 模型正常，ClaudeCode/Codex 却调不了。原因是 Codex 原生适配 OpenAI 协议、Claude 需单独适配中转协议。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/ccswitch/">CCSwitch</a> /
+<span>ClaudeCode、Codex 调不了，GPT 却正常？CCSwitch 协议适配差异</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-ccswitch)"> CCSwitch </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>ClaudeCode、Codex 调不了，GPT 却正常？CCSwitch 协议适配差异</h1> <p class="lead">同一个 CCSwitch 里 GPT 模型正常，ClaudeCode/Codex 却调不了。原因是 Codex 原生适配 OpenAI 协议、Claude 需单独适配中转协议。</p> <div class="article-meta"> <span class="tag-chip">#CCSwitch</span><span class="tag-chip">#ClaudeCode</span><span class="tag-chip">#Codex</span><span class="tag-chip">#协议适配</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤">解决步骤</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>在 CCSwitch / 多模型调度里，最诡异的现象就是：<strong>GPT 模型一切正常，ClaudeCode、Codex 却怎么都调不起来</strong>。</p>
+<h2 id="报错现象">报错现象</h2>
+<ul>
+<li>GPT 系列模型调用正常</li>
+<li>ClaudeCode、Codex 模型调用失败 / 返回错误</li>
+<li>报错信息集中在「协议不匹配」「无法连接」这类</li>
+</ul>
+<h2 id="原因分析">原因分析</h2>
+<p>这俩模型对协议的要求不一样：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>模型</th><th>协议适配</th><th>说明</th></tr></thead><tbody><tr><td><strong>Codex</strong></td><td>原生适配 OpenAI 协议</td><td>可以直接按 OpenAI 兼容方式调用</td></tr><tr><td><strong>Claude 系列</strong></td><td>需单独适配中转协议</td><td>原生 Anthropic 协议<strong>国内无法直连</strong>，必须经中转转换</td></tr></tbody></table>
+<p>所以不是模型没配，而是 <strong>Claude 系列没走对协议通道</strong>。</p>
+<h2 id="解决步骤">解决步骤</h2>
+<p><strong>把 Claude 系列模型封装为 OpenAI 兼容中转接口后再填入配置</strong>：</p>
+<ol>
+<li>在中转服务商处确认「Claude 系列」的<strong>模型 id 和调用端点</strong>（通常和 OpenAI 兼容端点不同）</li>
+<li>把 Claude 模型挂到 <strong>OpenAI 兼容接口</strong>下（中转服务商一般提供这类转换）</li>
+<li>配置里填入转换后的地址 + Claude 模型 id，不要直接填 Anthropic 原生地址</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span># 错误：直接在 ClaudeCode 里填 Anthropic 原生协议</span></span>
+<span class="line"><span># 正确：在中转服务商封装成 OpenAI 兼容接口后，再填到 CCSwitch</span></span>
+<span class="line"><span>Base URL: https://中转地址/v1</span></span>
+<span class="line"><span>Model:    claude-...（中转商给的 id）</span></span></code></pre>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>ClaudeCode 能正常调用</li>
+<li>Codex 仍按 OpenAI 协议正常工作</li>
+<li>三套模型（GPT / Claude / Codex）在 CCSwitch 里并存可切</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>现象</th><th>处理</th></tr></thead><tbody><tr><td>只有 Claude 系列失败</td><td>走 OpenAI 兼容中转封装</td></tr><tr><td>Codex 失败</td><td>确认走的是 OpenAI 协议</td></tr><tr><td>都不行</td><td>回到「协议混用」那篇检查</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>「GPT 能用、Claude 不能用」不是模型问题，是协议问题</strong>。Claude 系列在国内的标配姿势是「封装成 OpenAI 兼容再接入」。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>

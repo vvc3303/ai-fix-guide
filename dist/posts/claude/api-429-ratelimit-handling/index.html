@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>API 疯狂 429 Too Many Requests：冷却、换钥、降并发的正确顺序 · AI 排错指南</title><meta name="description" content="短时间请求量触达服务商限流，返回 429。按「停等冷却 → 换备用密钥 → 降并发 → 切本地模型」的顺序处理，附真实排查经验。"><meta name="generator" content="Astro v5.18.2"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/ai-fix-guide/_astro/_pillar_.DnZire9G.css"></head> <body> <header class="site-header"> <div class="container header-inner"> <a class="brand" href="/"> <span class="logo">AI</span> <span>AI 排错指南</span> </a> <nav class="nav" id="nav"> <a href="/">首页</a> <a href="/ollama/">Ollama</a><a href="/claude/">Claude</a><a href="/ccswitch/">CCSwitch</a><a href="/python/">Python 环境</a><a href="/vue/">Vue 低代码</a><a href="/mcp/">MCP 配置</a><a href="/other/">其他工具</a> </nav> <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button> </div> </header> <script type="module">const e=document.getElementById("nav-toggle"),t=document.getElementById("nav");e?.addEventListener("click",()=>t?.classList.toggle("open"));</script> <main class="container"> <article> <div class="crumbs"> <a href="/">首页</a> /
+<a href="/claude/">Claude</a> /
+<span>API 疯狂 429 Too Many Requests：冷却、换钥、降并发的正确顺序</span> </div> <header class="article-header"> <div class="article-meta"> <span class="badge badge-pillar" style="--c-pillar:var(--c-claude)"> Claude </span> <span>2026-08-02</span> <span>4 分钟阅读</span> </div> <h1>API 疯狂 429 Too Many Requests：冷却、换钥、降并发的正确顺序</h1> <p class="lead">短时间请求量触达服务商限流，返回 429。按「停等冷却 → 换备用密钥 → 降并发 → 切本地模型」的顺序处理，附真实排查经验。</p> <div class="article-meta"> <span class="tag-chip">#API</span><span class="tag-chip">#429</span><span class="tag-chip">#限流</span><span class="tag-chip">#并发</span> </div> </header> <div class="article-grid"> <aside class="toc"> <details open> <summary>目录</summary> <ol> <li> <a href="#报错现象">报错现象</a> </li><li> <a href="#原因分析">原因分析</a> </li><li> <a href="#解决步骤按顺序做">解决步骤（按顺序做）</a> </li><li> <a href="#效果验证">效果验证</a> </li><li> <a href="#排错速查表">排错速查表</a> </li> </ol> </details> </aside> <div class="article-body"> <p>跑任务写脚本时最烦的就是刷出来一屏 <code>429 Too Many Requests</code>。它一般不是 Bug，是<strong>你的请求量触达了服务商限流</strong>。</p>
+<h2 id="报错现象">报错现象</h2>
+<p>短时间内批量调用，接口连续返回：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>429 Too Many Requests</span></span></code></pre>
+<h2 id="原因分析">原因分析</h2>
+<p>同一个 API 密钥在短时间内请求量过大，触达服务商的 <strong>RPM（每分钟请求数）/ TPM（每分钟 token 数）</strong> 限流规则。常见诱因：</p>
+<ul>
+<li>脚本里的循环没加间隔，瞬间打满配额</li>
+<li>多个脚本共用一个密钥</li>
+<li>重试逻辑写成死循环，失败后立刻重发</li>
+</ul>
+<h2 id="解决步骤按顺序做">解决步骤（按顺序做）</h2>
+<ol>
+<li><strong>暂停调用等待冷却</strong>：先停脚本，等 30-60 秒让计数窗口刷新。这一步能解决一大半问题。</li>
+<li><strong>更换备用密钥</strong>：如果有多个密钥，换一个没到限流的继续跑。</li>
+<li><strong>降低并发请求速度</strong>：在循环里加延时，或用队列串行化：</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time, random</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> tasks:</span></span>
+<span class="line"><span style="color:#E1E4E8">    call_api(item)</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.sleep(random.uniform(</span><span style="color:#79B8FF">0.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1.5</span><span style="color:#E1E4E8">))  </span><span style="color:#6A737D"># 每次请求间隔，避免瞬间打满</span></span></code></pre>
+<ol start="4">
+<li><strong>切换本地离线模型</strong>：如果只是内部测试/重复任务，直接改用 Ollama 本地模型，彻底绕开云端限流。</li>
+</ol>
+<h2 id="效果验证">效果验证</h2>
+<ul>
+<li>429 消失，任务稳定跑完</li>
+<li>服务商后台的用量统计不再触顶</li>
+</ul>
+<h2 id="排错速查表">排错速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>场景</th><th>优先级</th></tr></thead><tbody><tr><td>临时小批量触发</td><td>等冷却即可</td></tr><tr><td>长期跑批任务</td><td>降并发 + 加间隔</td></tr><tr><td>并发要求高</td><td>换备用密钥分流</td></tr><tr><td>非必须云端</td><td>切本地 Ollama</td></tr></tbody></table>
+<blockquote>
+<p>核心经验：<strong>429 的正确姿势是「先停再想」</strong>。盲目加并发重试只会让限流时间更长，必要时直接本地化绕开。</p>
+</blockquote> </div> </div> </article> </main> <footer class="site-footer"> <div class="container footer-inner"> <span>AI 排错指南 — 让每一个 AI 新手不再卡在环境部署上</span> <span>© 2026 · 本站内容基于真实踩坑整理</span> </div> </footer> </body></html>
