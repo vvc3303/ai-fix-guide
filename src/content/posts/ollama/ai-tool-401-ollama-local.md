@@ -1,9 +1,9 @@
 ---
-title: "Hermes 切到 Ollama 本地模型还报 401？旧云端密钥没清干净"
-description: "用 Hermes 把模型切换成 Ollama 本地模型后，接口仍返回 401 Unauthorized，原因竟是残留的旧 OpenAI 云端密钥。三步清干净。"
+title: "本地 AI 工具切到 Ollama 仍报 401？旧云端密钥没清干净"
+description: "把桌面 AI 客户端切换成 Ollama 本地模型后，接口仍返回 401 Unauthorized，原因竟是残留的旧 OpenAI 云端密钥。三步清干净。"
 pubDate: 2026-08-02
 pillar: ollama
-tags: [Ollama, Hermes, "401", 本地模型]
+tags: [Ollama, "401", 本地模型]
 readingMinutes: 4
 ---
 
@@ -11,7 +11,7 @@ readingMinutes: 4
 
 ## 报错现象
 
-Hermes 本地 AI 工具里，已经把模型切换为 Ollama 本地模型，但实际调用时接口依然返回：
+本地 AI 工具（各类桌面 AI 客户端）里，已经把模型切换为 Ollama 本地模型，但实际调用时接口依然返回：
 
 ```text
 401 Unauthorized
@@ -25,7 +25,7 @@ Hermes 本地 AI 工具里，已经把模型切换为 Ollama 本地模型，但�
 
 ## 解决步骤
 
-1. **清空本地缓存配置**：在 Hermes / 对应工具的配置目录里，删掉旧的云端 API 密钥、缓存凭证文件。
+1. **清空本地缓存配置**：在工具本身的配置目录里，删掉旧的云端 API 密钥、缓存凭证文件。
 2. **完整重走本地模型配置流程**：不要图省事只改模型名，从「添加服务商」这一步开始重新配置。
 3. **全程跳过所有云端 API 密钥填写项**：本地模型（Ollama）走 `http://localhost:11434`，不需要任何云端 Key，遇到「API Key / Secret」输入框就跳过。
 
@@ -34,7 +34,7 @@ Hermes 本地 AI 工具里，已经把模型切换为 Ollama 本地模型，但�
 ## 效果验证
 
 - 调用本地模型不再返回 401
-- Hermes 里能看到请求实际发往 `localhost:11434`
+- 工具里能看到请求实际发往 `localhost:11434`
 - 断网情况下本地模型仍能正常对话（云上密钥不会影响）
 
 ## 排错速查表
