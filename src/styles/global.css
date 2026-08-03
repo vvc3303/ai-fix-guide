@@ -504,3 +504,105 @@ a:hover {
 .text-soft {
   color: var(--text-soft);
 }
+
+/* ---------- Consult page ---------- */
+.consult-hero {
+  padding: 40px 0 8px;
+}
+.consult-hero h1 {
+  font-size: 30px;
+  margin: 0 0 12px;
+}
+.consult-hero .lead {
+  color: var(--text-soft);
+  font-size: 16px;
+  max-width: 640px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.contact-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  text-align: center;
+  background: var(--bg);
+}
+.cc-head {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.cc-qr {
+  width: 160px;
+  height: 160px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 0 auto 12px;
+  display: block;
+}
+.cc-tip {
+  color: var(--text-soft);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+.cc-qq {
+  font-size: 18px;
+  margin: 34px 0 14px;
+}
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 8px;
+}
+.btn:hover {
+  background: #1d4fd8;
+  text-decoration: none;
+}
+
+.checklist li {
+  margin: 8px 0;
+}
+
+.faq details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+.faq summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+.faq details p {
+  color: var(--text-soft);
+  margin: 10px 0 0;
+}
+
+/* ---------- Post consultation CTA ---------- */
+.consult-cta {
+  margin-top: 40px;
+  padding: 20px 22px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.consult-cta p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+.consult-cta .btn {
+  flex-shrink: 0;
+}

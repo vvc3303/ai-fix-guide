@@ -15,6 +15,7 @@ const items = Object.entries(pillarMeta);
       {items.map(([key, meta]) => (
         <a href={`/${key}/`}>{meta.name}</a>
       ))}
+      <a href="/consult/" style="color: var(--accent); font-weight: 600;">咨询我</a>
     </nav>
     <button class="nav-toggle" id="nav-toggle" aria-label="菜单">☰</button>
   </div>

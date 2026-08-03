@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { contact } from '../contact';
+---
+
+<BaseLayout
+  title="找我咨询"
+  description="遇到本地部署报错搞不定？一对一咨询：Ollama、Claude、CCSwitch、Python 环境、MCP 配置排错。"
+>
+  <div class="crumbs">
+    <a href="/">首页</a> / <span>找我咨询</span>
+  </div>
+
+  <section class="consult-hero">
+    <h1>遇到报错搞不定？找我</h1>
+    <p class="lead">
+      教程覆盖不到的场景，欢迎一对一咨询。提供：<strong>报错定位、部署排错、MCP / 多模型配置指导</strong>。
+      咨询前先把报错原文和截图发我，能帮你更快解决问题。
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">联系方式</h2>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="cc-head">微信</div>
+        <img class="cc-qr" src={contact.wechatQr} alt="微信二维码" />
+        <p class="cc-tip">扫码或搜索添加：<strong>{contact.wechatId}</strong></p>
+      </div>
+      <div class="contact-card">
+        <div class="cc-head">QQ</div>
+        <div class="cc-qq">QQ：<strong>{contact.qq}</strong></div>
+        <a
+          class="btn"
+          href={`https://wpa.qq.com/msgrd?v=3&uin=${contact.qq}&site=qq&menu=yes`}
+          target="_blank"
+          rel="noopener"
+        >点此 QQ 咨询</a>
+        <p class="cc-tip">点击按钮直接发起 QQ 会话</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">咨询前请准备</h2>
+    <ol class="checklist">
+      <li>完整<strong>报错原文</strong>（复制报错信息，别只发截图）</li>
+      <li>报错<strong>截图</strong>或控制台输出</li>
+      <li>你的<strong>系统环境</strong>：Windows/macOS、显卡、内存</li>
+      <li>已经尝试过的解决步骤</li>
+    </ol>
+    <blockquote>
+      备齐这些材料，一次沟通就能定位问题；材料不全可能要多来回几轮。
+    </blockquote>
+  </section>
+
+  <section>
+    <h2 class="section-title">常见问题</h2>
+    <div class="faq">
+      <details>
+        <summary>咨询收费吗？</summary>
+        <p>普通问题看情况免费解答；复杂的远程排错 / 配置指导按次收取合理费用，具体沟通时说明。</p>
+      </details>
+      <details>
+        <summary>多久能回复？</summary>
+        <p>通常在当天回复，紧急问题可以说明情况，会优先处理。</p>
+      </details>
+      <details>
+        <summary>远程操作安全吗？</summary>
+        <p>只涉及你本机的配置排错，不会上传你的数据；涉及密钥时请自行保管好敏感信息。</p>
+      </details>
+    </div>
+  </section>
+</BaseLayout>
