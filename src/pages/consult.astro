@@ -38,6 +38,15 @@ import { contact } from '../contact';
         >点此 QQ 咨询</a>
         <p class="cc-tip">点击按钮直接发起 QQ 会话</p>
       </div>
+      <div class="contact-card">
+        <div class="cc-head">邮箱</div>
+        <div class="cc-qq">{contact.email}</div>
+        <a
+          class="btn"
+          href={`mailto:${contact.email}?subject=AI%20%E6%8E%92%E9%94%99%E5%92%A8%E8%AF%A2`}
+        >发邮件咨询</a>
+        <p class="cc-tip">复杂问题可发邮件附上完整报错日志</p>
+      </div>
     </div>
   </section>
 

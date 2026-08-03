@@ -1,5 +1,6 @@
 export const contact = {
-  wechatId: 'your-wechat-id',
+  wechatId: '15665470405',
   wechatQr: '/contact/wechat-qr.svg',
-  qq: '000000000',
+  qq: '1986582952',
+  email: 'zxc0510302022@163.com',
 };
