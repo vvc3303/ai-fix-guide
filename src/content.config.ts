@@ -32,12 +32,6 @@ export const pillarMeta: Record<
     desc: '安装、虚拟环境、pip、依赖冲突与版本管理',
     color: 'var(--c-python)',
   },
-  vue: {
-    name: 'Vue 低代码',
-    icon: '💚',
-    desc: 'Vue3 + Vite 工程、组件封装、前后端联调排错',
-    color: 'var(--c-vue)',
-  },
   mcp: {
     name: 'MCP 配置',
     icon: '🔌',
