@@ -35,7 +35,7 @@ codex --version
 **解决**：补全配置块。`~/.codex/config.toml`：
 
 ```toml
-model = "qwen3.7-max"
+model = "qwen-max"
 model_provider = "bailian"
 wire_api = "responses"
 
@@ -92,7 +92,7 @@ Remove-Item "$env:USERPROFILE\.codex\sessions" -Recurse -Force
 
 | 配置项 | 值 |
 |--------|-----|
-| model | `qwen3.7-max` |
+| model | `qwen-max` |
 | model_provider | `bailian` |
 | base_url | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
 | wire_api | `responses` |
