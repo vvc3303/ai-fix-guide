@@ -2,7 +2,7 @@
 title: "Vue 页面拉取低代码平台业务数据为空/报错：用平台内置数据集函数"
 description: "找不到低代码平台的原生接口文档，直接在 Vue 里写请求代码渲染饼图、数据卡片，结果语法报错、数据为空。改用平台内置数据集统计函数就通了。"
 pubDate: 2026-08-02
-pillar: vue
+pillar: other
 tags: [Vue, 低代码平台, 数据集, 图表]
 readingMinutes: 5
 ---

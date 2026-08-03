@@ -2,7 +2,7 @@
 title: "Codex CLI 排错：auth 凭据、npm 路径冲突、临时目录堆积"
 description: "Codex 本地装好后遇到认证凭据读不出来、npm install -g 提示会更新另一个安装、临时目录堆积清理失败三个问题，逐一排查。"
 pubDate: 2026-08-03
-pillar: other
+pillar: codex
 tags: [Codex, npm, 排错]
 readingMinutes: 5
 ---

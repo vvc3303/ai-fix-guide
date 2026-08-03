@@ -2,7 +2,7 @@
 title: "Codex CLI 接入阿里云百炼 Qwen：安装包名、config、base_url、缓存 4 个坑"
 description: "想让 Codex 用上阿里云百炼 Qwen，npm 包名写错、config.toml 缺 provider 区块、base_url 404、缓存残留不生效，四个坑一次讲清全部解法。"
 pubDate: 2026-08-03
-pillar: other
+pillar: codex
 tags: [Codex, 百炼, 阿里云, config.toml]
 readingMinutes: 8
 ---

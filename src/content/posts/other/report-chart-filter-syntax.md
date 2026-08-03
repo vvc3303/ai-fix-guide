@@ -2,7 +2,7 @@
 title: "报表饼图统计为 0、重复统计、过滤语法报错：核对字段与表达式"
 description: "报表饼图预览异常、统计结果为 0、过滤条件语法报错。根因是过滤表达式缺引号、字段名不匹配，核对数据库原始字段值格式即可。"
 pubDate: 2026-08-02
-pillar: vue
+pillar: other
 tags: [Vue, 报表, 饼图, 过滤表达式]
 readingMinutes: 5
 ---

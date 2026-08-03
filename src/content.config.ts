@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-export const pillars = ['ollama', 'claude', 'ccswitch', 'python', 'vue', 'mcp', 'other'] as const;
+export const pillars = ['ollama', 'claude', 'ccswitch', 'python', 'mcp', 'codex', 'other'] as const;
 export type Pillar = (typeof pillars)[number];
 
 export const pillarMeta: Record<
@@ -44,10 +44,16 @@ export const pillarMeta: Record<
     desc: 'MCP 协议、Server 搭建、Claude/本地模型接入',
     color: 'var(--c-mcp)',
   },
+  codex: {
+    name: 'Codex',
+    icon: '⌨️',
+    desc: 'Codex CLI 安装、配置、接入国内模型与鉴权排错',
+    color: 'var(--c-codex)',
+  },
   other: {
     name: '其他工具',
     icon: '🛠️',
-    desc: 'FFmpeg、开发平台、各类环境工具的零散踩坑',
+    desc: 'Vue 低代码、FFmpeg、开发平台等零散踩坑',
     color: 'var(--c-other)',
   },
 };
